@@ -2,17 +2,21 @@
 #'
 #' For a given trait, this function ...
 #'
-#' @param pos Positive interactions. Input consists on a three colums data frame
+#' @param pos Positive interactions. Input consists on a three colums data frame.
 #'
-#' @param neg
+#' @param neg Negative interactions. Input consists on a three colums data frame.
 #'
-#' @param network_name Network name (character)
+#' @param network_name Network name which will be included on the output table.
 #'
-#' @param num_random_networks
+#' @param num_random_networks Number of random networks generated for calculating the confidence
+#' intervals for each motiv.
 #'
-#' @param out
+#' @param out Out format. Choose between "count" -number of motifs- or "normalized"
+#' -number of motifs divided by the square of the node number-.
 #'
-#' @return
+#' @param square.motifs TRUE or FALSE to include or not the four nodes square motifs.
+#'
+#' @return List of...
 #'
 #' @examples
 #'
@@ -83,7 +87,7 @@ conf.motifs <- function(pos, neg, network_name, num_random_networks, out, square
 
   for(randomization in 1:num_random_networks){
 
-    print(paste("Starting randomization n°", randomization, sep = " "))
+    print(paste("Starting randomization num", randomization, sep = " "))
 
     # simulate networks
     a <- as.data.frame(simcausal::rnet.gnp(length(uniq.neg), p.neg))
@@ -91,7 +95,7 @@ conf.motifs <- function(pos, neg, network_name, num_random_networks, out, square
     a <- reshape2::melt(a)
     a <- a[,c(1,3,2)]
     a$variable <- "NEG"
-    a <- a[complete.cases(a$value),]
+    a <- a[stats::complete.cases(a$value),]
     a$value <- as.character(a$value)
     colnames(a) <-  c("Source", "Target", "Type")
     a$Source <- gsub("", "a", a$Source)
@@ -103,7 +107,7 @@ conf.motifs <- function(pos, neg, network_name, num_random_networks, out, square
     a <- reshape2::melt(a)
     a <- a[,c(1,3,2)]
     a$variable <- "POS"
-    a <- a[complete.cases(a$value),]
+    a <- a[stats::complete.cases(a$value),]
     a$value <- as.character(a$value)
     colnames(a) <-  c("Source", "Target", "Type")
     a$Source <- gsub("", "a", a$Source)

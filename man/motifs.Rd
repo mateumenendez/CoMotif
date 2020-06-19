@@ -4,22 +4,25 @@
 \alias{motifs}
 \title{Extract motifs from co-occurrence/co-exclusion networks.}
 \usage{
-motifs(pos, neg, network_name, out)
+motifs(pos, neg, network_name, out, square.motifs = FALSE)
 }
 \arguments{
-\item{pos}{Positive interactions. Input consists on a three colums data frame}
+\item{pos}{Positive interactions. Input consists on a three colums data frame.}
 
-\item{neg}{}
+\item{neg}{Negative interactions. Input consists on a three colums data frame.}
 
-\item{network_name}{}
+\item{network_name}{Network name which will be included on the output table.}
 
-\item{out}{}
+\item{out}{Out format. Choose between "count" (number of motifs) or "normalized"
+(number of motifs divided by the square of the node number).}
+
+\item{square.motifs}{TRUE or FALSE to include or not the four node motifs.}
 }
 \value{
 A list of two data frames...
 }
 \description{
-For a given trait, this function ...
+Quantify 3 and square 4 nodes mofifs from co-occurrence and co-exclusions networks.
 }
 \examples{
 
@@ -27,6 +30,6 @@ data(pos)
 data(neg)
 
 motifs(pos = pos, neg = neg, network_name = "test_network", out = "count")
-motifs(pos = pos, neg = neg, network_name = "test_network", out = "normalized")
+motifs(pos = pos, neg = neg, network_name = "test_network", out = "normalized", square.motifs = TRUE)
 
 }

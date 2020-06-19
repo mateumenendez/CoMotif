@@ -1,3 +1,3 @@
 # CoMotif
 
-### Quantifying network motif on co-occurrence/co-exclusion networks. 
+### Motif analisys from co-occurrence and co-exclusions networks.

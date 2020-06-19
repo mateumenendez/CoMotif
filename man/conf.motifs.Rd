@@ -4,21 +4,32 @@
 \alias{conf.motifs}
 \title{Random networks confidence interval}
 \usage{
-conf.motifs(pos, neg, network_name, num_random_networks, out)
+conf.motifs(
+  pos,
+  neg,
+  network_name,
+  num_random_networks,
+  out,
+  square.motifs = FALSE
+)
 }
 \arguments{
-\item{pos}{Positive interactions. Input consists on a three colums data frame}
+\item{pos}{Positive interactions. Input consists on a three colums data frame.}
 
-\item{neg}{}
+\item{neg}{Negative interactions. Input consists on a three colums data frame.}
 
-\item{network_name}{Network name (character)}
+\item{network_name}{Network name which will be included on the output table.}
 
-\item{num_random_networks}{}
+\item{num_random_networks}{Number of random networks generated for calculating the confidence
+intervals for each motiv.}
 
-\item{out}{}
+\item{out}{Out format. Choose between "count" -number of motifs- or "normalized"
+-number of motifs divided by the square of the node number-.}
+
+\item{square.motifs}{TRUE or FALSE to include or not the four nodes square motifs.}
 }
 \value{
-
+List of...
 }
 \description{
 For a given trait, this function ...
@@ -29,9 +40,6 @@ data(pos)
 data(neg)
 
 conf.motifs(pos = pos, neg = neg, network_name = "test_network", num_random_networks = 100,
-out = "count")
-
-conf.motifs(pos = pos, neg = neg, network_name = "test_network", num_random_networks = 100,
-out = "normalized")
+out = "normalized", square.motifs = TRUE)
 
 }

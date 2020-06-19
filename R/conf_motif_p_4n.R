@@ -2,19 +2,24 @@
 #'
 #' For a given trait, this function ...
 #'
-#' @param pos Positive interactions. Input consists on a three colums data frame
+#' @param pos Positive interactions. Input consists on a three colums data frame.
 #'
-#' @param neg
+#' @param neg Negative interactions. Input consists on a three colums data frame.
 #'
-#' @param network_name Network name (character)
+#' @param network_name Network name which will be included on the output table.
 #'
-#' @param num_random_networks
+#' @param num_random_networks Number of random networks generated for calculating the confidence
+#' intervals for each motiv.
 #'
-#' @param out
+#' @param out Out format. Choose between "count" (number of motifs) or "normalized"
+#' (number of motifs divided by the square of the node number).
 #'
-#' @param cores
+#' @param square.motifs TRUE or FALSE to include or not the four node motifs.
 #'
-#' @return
+#' @param cores Number of cores for paralelization. If missing, the number of available
+#' cores will be autimatically detected and the parameter will be stablished as n°cores - 1.
+#'
+#' @return List of...
 #'
 #' @examples
 #'
@@ -22,7 +27,7 @@
 #' data(neg)
 #'
 #' conf.motifs.p(pos = pos, neg = neg, network_name = "test_network",
-#' num_random_networks = 10, out = "count", cores = 4, square.motifs = TRUE)
+#' num_random_networks = 10, out = "count", cores = 2, square.motifs = TRUE)
 #'
 #' @export
 #'
@@ -31,6 +36,7 @@ conf.motifs.p <- function(pos, neg, network_name, num_random_networks, out, core
   #necesary internal function
   `%!in%` = Negate(`%in%`)
   library(doParallel)
+  library(foreach)
 
   # input modification
   uniq.neg <- unique(c(as.character(unique(neg$Source)), as.character(unique(neg$Target))))
@@ -107,7 +113,7 @@ conf.motifs.p <- function(pos, neg, network_name, num_random_networks, out, core
     a <- reshape2::melt(a)
     a <- a[,c(1,3,2)]
     a$variable <- "NEG"
-    a <- a[complete.cases(a$value),]
+    a <- a[stats::complete.cases(a$value),]
     a$value <- as.character(a$value)
     colnames(a) <-  c("Source", "Target", "Type")
     a$Source <- gsub("", "a", a$Source)
@@ -119,7 +125,7 @@ conf.motifs.p <- function(pos, neg, network_name, num_random_networks, out, core
     a <- reshape2::melt(a)
     a <- a[,c(1,3,2)]
     a$variable <- "POS"
-    a <- a[complete.cases(a$value),]
+    a <- a[stats::complete.cases(a$value),]
     a$value <- as.character(a$value)
     colnames(a) <-  c("Source", "Target", "Type")
     a$Source <- gsub("", "a", a$Source)
@@ -421,7 +427,7 @@ conf.motifs.p <- function(pos, neg, network_name, num_random_networks, out, core
     count #Equivalent to finalMatrix = cbind(finalMatrix, tempMatrix)
   }
   #stop cluster
-  stopCluster(cl)
+  parallel::stopCluster(cl)
 
   return(finalMatrix)
 

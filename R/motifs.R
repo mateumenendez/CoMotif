@@ -1,14 +1,17 @@
 #' Extract motifs from co-occurrence/co-exclusion networks.
 #'
-#' For a given trait, this function ...
+#' Quantify 3 and square 4 nodes mofifs from co-occurrence and co-exclusions networks.
 #'
-#' @param pos Positive interactions. Input consists on a three colums data frame
+#' @param pos Positive interactions. Input consists on a three colums data frame.
 #'
-#' @param neg
+#' @param neg Negative interactions. Input consists on a three colums data frame.
 #'
-#' @param network_name
+#' @param network_name Network name which will be included on the output table.
 #'
-#' @param out
+#' @param out Out format. Choose between "count" (number of motifs) or "normalized"
+#' (number of motifs divided by the square of the node number).
+#'
+#' @param square.motifs TRUE or FALSE to include or not the four node motifs.
 #'
 #' @return A list of two data frames...
 #'
