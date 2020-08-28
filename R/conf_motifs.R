@@ -59,29 +59,29 @@ conf.motifs <- function(pos, neg, network_name, num_random_networks, out, square
   count[, colnames(count) == "links"] <- nrow(all)
 
 
-  # get network parameters
-  ## positive network
-  meanD <- c()
-  for(i in uniq.pos){
-    meanD <- c(meanD, nrow(pos[pos$Source == i | pos$Target == i,]))
-  }
-  pos_mean_degree <- mean(meanD)
-
-  m <- (pos_mean_degree * length(uniq.pos))/3
-  TT <- length(uniq.pos)^2
-  p.pos <- (m * 2)/TT
-
-  ## negative network
-  meanD <- c()
-  i <- uniq.neg[1]
-  for(i in uniq.neg){
-    meanD <- c(meanD, nrow(neg[neg$Source == i | neg$Target == i,]))
-  }
-  neg_mean_degree <- mean(meanD)
-
-  m <- (neg_mean_degree * length(uniq.neg))/3
-  TT <- length(uniq.neg)^2
-  p.neg <- (m * 2)/TT
+  # # get network parameters
+  # ## positive network
+  # meanD <- c()
+  # for(i in uniq.pos){
+  #   meanD <- c(meanD, nrow(pos[pos$Source == i | pos$Target == i,]))
+  # }
+  # pos_mean_degree <- mean(meanD)
+  #
+  # m <- (pos_mean_degree * length(uniq.pos))/3
+  # TT <- length(uniq.pos)^2
+  # p.pos <- (m * 2)/TT
+  #
+  # ## negative network
+  # meanD <- c()
+  #
+  # for(i in uniq.neg){
+  #   meanD <- c(meanD, nrow(neg[neg$Source == i | neg$Target == i,]))
+  # }
+  # neg_mean_degree <- mean(meanD)
+  #
+  # m <- (neg_mean_degree * length(uniq.neg))/3
+  # TT <- length(uniq.neg)^2
+  # p.neg <- (m * 2)/TT
 
 
 
@@ -90,29 +90,65 @@ conf.motifs <- function(pos, neg, network_name, num_random_networks, out, square
     print(paste("Starting randomization num", randomization, sep = " "))
 
     # simulate networks
-    a <- as.data.frame(simcausal::rnet.gnp(length(uniq.neg), p.neg))
-    a$Source <- as.character(seq(1:nrow(a)))
-    a <- reshape2::melt(a)
-    a <- a[,c(1,3,2)]
-    a$variable <- "NEG"
-    a <- a[stats::complete.cases(a$value),]
-    a$value <- as.character(a$value)
-    colnames(a) <-  c("Source", "Target", "Type")
-    a$Source <- gsub("", "a", a$Source)
-    a$Target <- gsub("", "a", a$Target)
-    neg.s <- a
+    # a <- as.data.frame(simcausal::rnet.gnp(length(uniq.neg), p.neg))
+    # a$Source <- as.character(seq(1:nrow(a)))
+    # a <- reshape2::melt(a)
+    # a <- a[,c(1,3,2)]
+    # a$variable <- "NEG"
+    # a <- a[stats::complete.cases(a$value),]
+    # a$value <- as.character(a$value)
+    # colnames(a) <-  c("Source", "Target", "Type")
+    # a$Source <- gsub("", "a", a$Source)
+    # a$Target <- gsub("", "a", a$Target)
+    # neg.s <- a
+    #
+    # a <- as.data.frame(simcausal::rnet.gnp(length(uniq.pos), p.pos))
+    # a$Source <- as.character(seq(1:nrow(a)))
+    # a <- reshape2::melt(a)
+    # a <- a[,c(1,3,2)]
+    # a$variable <- "POS"
+    # a <- a[stats::complete.cases(a$value),]
+    # a$value <- as.character(a$value)
+    # colnames(a) <-  c("Source", "Target", "Type")
+    # a$Source <- gsub("", "a", a$Source)
+    # a$Target <- gsub("", "a", a$Target)
+    # pos.s <- a
 
-    a <- as.data.frame(simcausal::rnet.gnp(length(uniq.pos), p.pos))
-    a$Source <- as.character(seq(1:nrow(a)))
-    a <- reshape2::melt(a)
-    a <- a[,c(1,3,2)]
-    a$variable <- "POS"
-    a <- a[stats::complete.cases(a$value),]
-    a$value <- as.character(a$value)
-    colnames(a) <-  c("Source", "Target", "Type")
-    a$Source <- gsub("", "a", a$Source)
-    a$Target <- gsub("", "a", a$Target)
-    pos.s <- a
+
+    # alternative random network
+
+
+    pos.length <- nrow(pos)
+    neg.length <- nrow(neg)
+
+    pos.s <- data.frame(Source = rep(NA, pos.length), Target = rep(NA, pos.length), Type = rep("POS", pos.length))
+    i <- 1
+    while(i <= pos.length){
+      pair <- sample(x = uniq, size = 2, replace = F)
+      tmp1 <- pos.s[pos.s$Source == pair[1] | pos.s$Target == pair[1],]
+      if(pair[2] %!in% c(as.character(tmp1$Source), as.character(tmp1$Target))){
+        pos.s[i,1] <- pair[1]
+        pos.s[i,2] <- pair[2]
+        i <- i + 1
+        rm(pair, tmp1)
+      } else {NULL}
+    }
+    neg.s <- data.frame(Source = rep(NA, neg.length), Target = rep(NA, neg.length), Type = rep("NEG", neg.length))
+    i <- 1
+    while(i <= neg.length){
+      pair <- sample(x = uniq, size = 2, replace = F)
+      temp1 <- pos.s[pos.s$Source == pair[1] | pos.s$Target == pair[1],]
+      temp2 <- neg.s[neg.s$Source == pair[1] | neg.s$Target == pair[1],]
+      if(pair[2] %!in% c(as.character(temp1$Source), as.character(temp1$Target))){
+        if(pair[2] %!in% c(as.character(temp2$Source), as.character(temp2$Target))){
+          neg.s[i,1] <- pair[1]
+          neg.s[i,2] <- pair[2]
+          i <- i + 1
+        } else {NULL}
+      } else {NULL}
+    }
+    rm(temp1, temp2, i)
+
 
 
     uniq.neg.s <- unique(c(as.character(unique(neg.s$Source)), as.character(unique(neg.s$Target))))
