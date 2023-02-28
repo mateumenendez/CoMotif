@@ -1,3 +1,3 @@
 # CoMotif
 
-### Motif analisys from co-occurrence and co-exclusions networks.
+### Motif analysis from co-occurrence and co-exclusions networks.
